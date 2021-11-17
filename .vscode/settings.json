@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "prettier.configPath": "C:\\Users\\Alex\\Documents\\Projects\\dmhelper\\dmhelper-be\\.prettierrc.json",
+  "editor.tabSize": 2
+}

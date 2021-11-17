@@ -1,0 +1,26 @@
+{
+  "name": "dmhelper-be",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": "git@github.com:aprutledge/dmhelper-be.git",
+  "author": "Alex Rutledge <alexprutledge@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon ./server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.12",
+    "passport": "^0.5.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
