@@ -1,17 +1,27 @@
 require('../auth/auth');
 const passport = require('passport');
+const Util = require('../middleware/util');
+const CharacterController = require('../controllers/CharacterController');
 
 const SecureRoute = (app) => {
-  app.get(
-    '/user/profile',
+  app.post(
+    '/character/add',
     passport.authenticate('jwt', { session: false }),
-    (req, res, next) => {
-      res.json({
-        message: 'You made it to the secure route',
-        user: req.user,
-        token: req.query.secret_token,
-      });
-    }
+    CharacterController.createCharacter
+  );
+
+  app.patch(
+    '/character/edit',
+    passport.authenticate('jwt', { session: false }),
+    Util.convertIdToObjectId,
+    CharacterController.editCharacter
+  );
+
+  app.delete(
+    '/character/delete',
+    passport.authenticate('jwt', { session: false }),
+    Util.convertIdToObjectId,
+    CharacterController.deleteCharacter
   );
 };
 

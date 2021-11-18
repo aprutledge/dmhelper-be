@@ -10,14 +10,29 @@ passport.use(
     {
       usernameField: 'email',
       passwordField: 'password',
+      passReqToCallback: true,
     },
-    async (email, password, done) => {
-      try {
-        const user = await UserModel.create({ email, password });
-        return done(null, user);
-      } catch (error) {
-        done(error);
-      }
+    async (req, email, password, done) => {
+      process.nextTick(() => {
+        UserModel.findOne({ email }, (err, user) => {
+          if (err) return done(err);
+
+          if (user) {
+            return done(null, false, { message: 'User already exists' });
+          } else {
+            var newUser = new UserModel();
+            newUser.email = email;
+            newUser.password = password;
+            newUser.firstName = req.body.firstName;
+            newUser.lastName = req.body.lastName;
+            newUser.save((err) => {
+              if (err) throw err;
+
+              return done(null, newUser);
+            });
+          }
+        });
+      });
     }
   )
 );
@@ -55,7 +70,7 @@ passport.use(
   new JWTStrategy(
     {
       secretOrKey: 'TOP_SECRET',
-      jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token'),
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async (token, done) => {
       try {
