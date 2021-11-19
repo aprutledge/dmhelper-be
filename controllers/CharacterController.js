@@ -5,6 +5,34 @@ const hello = (req, res) => {
   return res.send({ message: 'hello world!' });
 };
 
+const getCharacterById = (req, res) => {
+  Character.findOne({ _id: req.params.id, owner: req.user.id })
+    .then((character) => {
+      if (character) {
+        return res.status(200).send(character);
+      } else {
+        return res.status(404).send({ message: 'Character not found.' });
+      }
+    })
+    .catch((err) => {
+      return res.sendStatus(500);
+    });
+};
+
+const getAllCharacters = (req, res) => {
+  Character.find({ owner: req.user.id })
+    .then((characters) => {
+      if (characters) {
+        return res.status(200).send(characters);
+      } else {
+        return res.status(404).send({ message: 'No characters found.' });
+      }
+    })
+    .catch((err) => {
+      return res.sendStatus(500);
+    });
+};
+
 const createCharacter = async (req, res) => {
   const user = await User.findOne({ email: req.user.email });
   console.log(user);
@@ -22,11 +50,12 @@ const createCharacter = async (req, res) => {
     },
     owner: user.id,
   });
-  return res.send(character);
+  return res.status(200).send(character);
 };
 
+// TODO need to add checks that character is owned by user
 const deleteCharacter = (req, res) => {
-  Character.findByIdAndRemove({ _id: req.body.id })
+  Character.findByIdAndRemove({ _id: req.params.id, owner: req.user.id })
     .then((result) => {
       if (result) {
         return res
@@ -41,10 +70,14 @@ const deleteCharacter = (req, res) => {
     });
 };
 
+// TODO need to add checks that character is owned by user
 const editCharacter = (req, res) => {
-  const { id, ...charInfo } = req.body;
   console.log(charInfo);
-  Character.findByIdAndUpdate({ _id: id }, charInfo, { new: true })
+  Character.findByIdAndUpdate(
+    { _id: req.params.id, owner: req.user.id },
+    charInfo,
+    { new: true }
+  )
     .then((result) => {
       if (result) {
         return res
@@ -61,6 +94,8 @@ const editCharacter = (req, res) => {
 
 const CharacterController = {
   hello,
+  getCharacterById,
+  getAllCharacters,
   createCharacter,
   deleteCharacter,
   editCharacter,

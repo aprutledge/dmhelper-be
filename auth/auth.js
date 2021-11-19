@@ -73,11 +73,18 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async (token, done) => {
-      try {
-        return done(null, token.user);
-      } catch (error) {
-        done(error);
-      }
+      const userId = token.user._id;
+      UserModel.findById(userId)
+        .then((user) => {
+          if (user) {
+            return done(null, user);
+          } else {
+            return done(null, false);
+          }
+        })
+        .catch((err) => {
+          return done(err, null);
+        });
     }
   )
 );

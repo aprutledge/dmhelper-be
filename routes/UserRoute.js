@@ -1,6 +1,6 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const UserModel = require('../models/user');
 require('../auth/auth');
 
 const UserRoute = (app) => {

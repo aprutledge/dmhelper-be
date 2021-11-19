@@ -47,6 +47,6 @@ app.use((req, res, next) => {
 
 app.use(passport.initialize());
 require('./routes/UserRoute')(app);
-require('./routes/SecureRoute')(app);
+require('./routes/CharacterRoute')(app);
 
 module.exports = app;

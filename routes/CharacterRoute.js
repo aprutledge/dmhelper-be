@@ -3,7 +3,19 @@ const passport = require('passport');
 const Util = require('../middleware/util');
 const CharacterController = require('../controllers/CharacterController');
 
-const SecureRoute = (app) => {
+const CharacterRoute = (app) => {
+  app.get(
+    '/character',
+    passport.authenticate('jwt', { session: false }),
+    CharacterController.getAllCharacters
+  );
+
+  app.get(
+    '/character/:id',
+    passport.authenticate('jwt', { session: false }),
+    CharacterController.getCharacterById
+  );
+
   app.post(
     '/character/add',
     passport.authenticate('jwt', { session: false }),
@@ -11,18 +23,18 @@ const SecureRoute = (app) => {
   );
 
   app.patch(
-    '/character/edit',
+    '/character/edit/:id',
     passport.authenticate('jwt', { session: false }),
     Util.convertIdToObjectId,
     CharacterController.editCharacter
   );
 
   app.delete(
-    '/character/delete',
+    '/character/delete/:id',
     passport.authenticate('jwt', { session: false }),
     Util.convertIdToObjectId,
     CharacterController.deleteCharacter
   );
 };
 
-module.exports = SecureRoute;
+module.exports = CharacterRoute;
