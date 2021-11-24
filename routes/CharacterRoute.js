@@ -11,6 +11,12 @@ const CharacterRoute = (app) => {
   );
 
   app.get(
+    '/character/:name',
+    passport.authenticate('jwt', { session: false }),
+    CharacterController.getCharactersByName
+  );
+
+  app.get(
     '/character/:id',
     passport.authenticate('jwt', { session: false }),
     CharacterController.getCharacterById

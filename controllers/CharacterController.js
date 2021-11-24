@@ -19,6 +19,20 @@ const getCharacterById = (req, res) => {
     });
 };
 
+const getCharactersByName = (req, res) => {
+  Character.find({ name: req.params.name, owner: req.user.id })
+    .then((characters) => {
+      if (characters) {
+        return res.status(200).send(characters);
+      } else {
+        return res.status(404).send({ message: 'Character not found.' });
+      }
+    })
+    .catch((err) => {
+      return res.sendStatus(500);
+    });
+};
+
 const getAllCharacters = (req, res) => {
   Character.find({ owner: req.user.id })
     .then((characters) => {
@@ -53,7 +67,6 @@ const createCharacter = async (req, res) => {
   return res.status(200).send(character);
 };
 
-// TODO need to add checks that character is owned by user
 const deleteCharacter = (req, res) => {
   Character.findByIdAndRemove({ _id: req.params.id, owner: req.user.id })
     .then((result) => {
@@ -70,7 +83,6 @@ const deleteCharacter = (req, res) => {
     });
 };
 
-// TODO need to add checks that character is owned by user
 const editCharacter = (req, res) => {
   console.log(charInfo);
   Character.findByIdAndUpdate(
@@ -95,6 +107,7 @@ const editCharacter = (req, res) => {
 const CharacterController = {
   hello,
   getCharacterById,
+  getCharactersByName,
   getAllCharacters,
   createCharacter,
   deleteCharacter,

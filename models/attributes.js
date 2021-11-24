@@ -29,3 +29,8 @@ const AttributesSchema = new Schema({
 });
 
 const Attributes = mongoose.model('Attributes', AttributesSchema);
+
+module.exports = {
+  AttributesSchema,
+  Attributes,
+};

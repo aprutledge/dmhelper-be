@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const AttributesSchema = require('./attributes').AttributesSchema;
 
-const CharacterSchema = new Schema(
+const NPCSchema = new Schema(
   {
     name: {
       type: String,
@@ -26,11 +26,11 @@ const CharacterSchema = new Schema(
     },
   },
   {
-    collection: 'characters',
+    collection: 'npcs',
     versionKey: false,
   }
 );
 
-const Character = mongoose.model('Character', CharacterSchema);
+const NPC = mongoose.model('NPC', NPCSchema);
 
-module.exports = Character;
+module.exports = NPC;
