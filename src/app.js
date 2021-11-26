@@ -4,49 +4,45 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const UserRoutes = require('./routes/UserRoute');
+const CharacterRoutes = require('./routes/CharacterRoute');
 
-const app = express();
+class App {
+  constructor() {
+    this.server = express();
 
-app.use(express.json());
+    this.middlewares();
+    this.database();
+    this.routes();
+  }
 
-app.use(express.urlencoded({ extended: true }));
+  middlewares() {
+    this.server.use(express.json());
+    this.server.use(express.urlencoded({ extended: true }));
+    const corsOptions = {
+      origin: ['http://localhost:8081'],
+    };
+    this.server.use(cors(corsOptions));
+    this.server.set('etag', false);
+    this.server.use((req, res, next) => {
+      res.set('Cache-Control', 'no-store');
+      next();
+    });
+    this.server.use(passport.initialize());
+  }
 
-mongoose.Promise = global.Promise;
+  async database() {
+    await mongoose.connect(mongoURI).then(() => {
+      console.log(`| MongoDB URL  : ${mongoURI}`);
+      console.log('| MongoDB Connected');
+      console.log('|-----------------------------------------');
+    });
+  }
 
-Promise.resolve(app)
-  .then(MongoDBConnection())
-  .catch((err) =>
-    console.error.bind(
-      console.error,
-      `MongoDB connection error: ${JSON.stringify(err)}`
-    )
-  );
-
-async function MongoDBConnection() {
-  await mongoose.connect(mongoURI).then(() => {
-    console.log(`| MongoDB URL  : ${mongoURI}`);
-    console.log('| MongoDB Connected');
-    console.log('|-----------------------------------------');
-  });
-
-  return null;
+  routes() {
+    this.server.use(UserRoutes);
+    this.server.use(CharacterRoutes);
+  }
 }
 
-const corsOptions = {
-  origin: ['http://localhost:8081'],
-};
-
-app.use(cors(corsOptions));
-
-app.set('etag', false);
-
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store');
-  next();
-});
-
-app.use(passport.initialize());
-require('./routes/UserRoute')(app);
-require('./routes/CharacterRoute')(app);
-
-module.exports = app;
+module.exports = new App().server;

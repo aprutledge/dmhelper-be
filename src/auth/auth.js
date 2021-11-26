@@ -15,6 +15,7 @@ passport.use(
     async (req, email, password, done) => {
       process.nextTick(() => {
         UserModel.findOne({ email }, (err, user) => {
+          console.log(user + err);
           if (err) return done(err);
 
           if (user) {

@@ -1,46 +1,47 @@
 require('../auth/auth');
 const passport = require('passport');
+const { Router } = require('express');
 const Util = require('../middleware/util');
 const CharacterController = require('../controllers/CharacterController');
 
-const CharacterRoute = (app) => {
-  app.get(
-    '/character',
-    passport.authenticate('jwt', { session: false }),
-    CharacterController.getAllCharacters
-  );
+const CharacterRoutes = Router();
 
-  app.get(
-    '/character/:name',
-    passport.authenticate('jwt', { session: false }),
-    CharacterController.getCharactersByName
-  );
+CharacterRoutes.get(
+  '/character',
+  passport.authenticate('jwt', { session: false }),
+  CharacterController.getAllCharacters
+);
 
-  app.get(
-    '/character/:id',
-    passport.authenticate('jwt', { session: false }),
-    CharacterController.getCharacterById
-  );
+CharacterRoutes.get(
+  '/character/:name',
+  passport.authenticate('jwt', { session: false }),
+  CharacterController.getCharactersByName
+);
 
-  app.post(
-    '/character/add',
-    passport.authenticate('jwt', { session: false }),
-    CharacterController.createCharacter
-  );
+CharacterRoutes.get(
+  '/character/:id',
+  passport.authenticate('jwt', { session: false }),
+  CharacterController.getCharacterById
+);
 
-  app.patch(
-    '/character/edit/:id',
-    passport.authenticate('jwt', { session: false }),
-    Util.convertIdToObjectId,
-    CharacterController.editCharacter
-  );
+CharacterRoutes.post(
+  '/character/add',
+  passport.authenticate('jwt', { session: false }),
+  CharacterController.createCharacter
+);
 
-  app.delete(
-    '/character/delete/:id',
-    passport.authenticate('jwt', { session: false }),
-    Util.convertIdToObjectId,
-    CharacterController.deleteCharacter
-  );
-};
+CharacterRoutes.patch(
+  '/character/edit/:id',
+  passport.authenticate('jwt', { session: false }),
+  Util.convertIdToObjectId,
+  CharacterController.editCharacter
+);
 
-module.exports = CharacterRoute;
+CharacterRoutes.delete(
+  '/character/delete/:id',
+  passport.authenticate('jwt', { session: false }),
+  Util.convertIdToObjectId,
+  CharacterController.deleteCharacter
+);
+
+module.exports = CharacterRoutes;
