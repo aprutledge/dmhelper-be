@@ -61,32 +61,56 @@ describe('Project', () => {
     done();
   });
 
-  // it('should be able to create a project', async () => {
-  //   const response = await request(app).post('/projects').send({
-  //     title: 'Projeto Node.js IIIIIIIIIIIII',
-  //     description: 'Um projeto muito massa!',
-  //   });
+  it('should be able to login', async (done) => {
+    await request(app).post('/signup').send({
+      email: 'test@test.com',
+      password: 'password',
+      firstName: 'Alex',
+      lastName: 'Test',
+    });
 
-  //   expect(response.status).toBe(200);
-  // });
+    const response = await request(app).post('/login').send({
+      email: 'test@test.com',
+      password: 'password',
+    });
 
-  // it('should not create a project if it has already been defined', async () => {
-  //   await request(app).post('/projects').send({
-  //     title: 'Projeto Node.js IIIIIIIIIIIII',
-  //     description: 'Um projeto muito massa!',
-  //   });
+    expect(response.status).toBe(200);
+    expect(response.body.token).toEqual(expect.anything());
+    done();
+  });
 
-  //   const response = await request(app).post('/projects').send({
-  //     title: 'Projeto Node.js IIIIIIIIIIIII',
-  //     description: 'Um projeto muito massa!',
-  //   });
+  it('Logged In - should be able to add character', async (done) => {
+    await request(app).post('/signup').send({
+      email: 'test@test.com',
+      password: 'password',
+      firstName: 'Alex',
+      lastName: 'Test',
+    });
 
-  //   expect(response.body).toMatchObject({ error: 'Duplicated project' });
-  // });
+    const loginResponse = await request(app).post('/login').send({
+      email: 'test@test.com',
+      password: 'password',
+    });
+    const token = loginResponse.body.token || null;
 
-  // it('should be able to list all projects', async () => {
-  //   const response = await request(app).get('/projects');
+    const response = await request(app)
+      .post('/character/add')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        name: 'Merci',
+        race: 'Gnome',
+        charClass: 'Ranger',
+        attributes: {
+          str: 10,
+          dex: 10,
+          con: 10,
+          wis: 10,
+          int: 10,
+          cha: 10,
+        },
+      });
 
-  //   expect(response.status).toBe(200);
-  // });
+    expect(response.status).toBe(200);
+    done();
+  });
 });
