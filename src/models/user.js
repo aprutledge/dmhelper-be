@@ -2,22 +2,31 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
+const passportLocalMongoose = require('passport-local-mongoose');
+
+const Session = new Schema({
+  refreshToken: {
+    type: String,
+    default: '',
+  },
+});
+
 const UserSchema = new Schema(
   {
-    email: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
     firstName: {
       type: String,
+      default: '',
     },
     lastName: {
       type: String,
+      default: '',
+    },
+    authStrategy: {
+      type: String,
+      default: 'local',
+    },
+    refreshToken: {
+      type: [Session],
     },
   },
   {
@@ -26,20 +35,14 @@ const UserSchema = new Schema(
   }
 );
 
-UserSchema.pre('save', async function (next) {
-  const user = this;
-  const hash = await bcrypt.hash(this.password, 10);
-
-  this.password = hash;
-  next();
+UserSchema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    delete ret.refreshToken;
+    return ret;
+  },
 });
 
-UserSchema.methods.isValidPassword = async function (password) {
-  const user = this;
-  const compare = await bcrypt.compare(password, user.password);
-
-  return compare;
-};
+UserSchema.plugin(passportLocalMongoose);
 
 const User = mongoose.model('User', UserSchema);
 

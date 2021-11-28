@@ -2,10 +2,16 @@ require('dotenv').config();
 const mongoURI = process.env.MONGO_URI;
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
+
+require('./strategies/JwtStrategy');
+require('./strategies/LocalStrategy');
+require('./auth/authenticate');
+
 const UserRoutes = require('./routes/UserRoute');
-const CharacterRoutes = require('./routes/CharacterRoute');
+//const CharacterRoutes = require('./routes/CharacterRoute');
 
 class App {
   constructor() {
@@ -18,6 +24,7 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
+    this.server.use(cookieParser(process.env.COOKIE_SECRET));
     this.server.use(express.urlencoded({ extended: true }));
     const corsOptions = {
       origin: ['http://localhost:8081'],
@@ -41,7 +48,7 @@ class App {
 
   routes() {
     this.server.use(UserRoutes);
-    this.server.use(CharacterRoutes);
+    //this.server.use(CharacterRoutes);
   }
 }
 
